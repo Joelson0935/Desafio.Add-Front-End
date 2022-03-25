@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../Jquery/jquery.min.js"></script>
+    <link rel="stylesheet" href="../Css/estiloIndex.css">
+    <title>Projeto Empresa.Add</title>
+</head>
+
+<body>
+    <h1>Cadastro de Alunos</h1>
+    <form id="form1">
+
+        <div class="aluno">
+            <label for="Nome">Nome do Aluno: </label>
+            <input type="text" id="nome" required>
+
+            <label for="data">Data de Nascimento: </label>
+            <input type="datetime" id="data" required placeholder="01/01/0001">
+            <button type="button" class="enviar">Enviar</button>
+        </div>
+    </form>
+
+    <div class="botao"><button type="button" id="pegar">Buscar Alunos</button></div>
+
+    <div class="tabela">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome do Aluno</th>
+                    <th>Data de Nascimento</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    </table>
+
+    <script>
+        $('.enviar').click(() => {
+            let nome = $('#nome').val();
+            let dataDeNascimento = $('#data').val();
+
+            $.ajax({
+                method: "Post",
+                url: "http://localhost:8082/Escolinha/Alunos/Salvar",
+                data: JSON.stringify({ nome: nome, dataDeNascimento: dataDeNascimento }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data);
+                    alert("salvo com sucesso !");
+                    document.getElementById('form1').reset();
+                }
+            }).fail(function (xhr, status, errorThrown) {
+                alert("Data deve estar no padrão: 99/99/9999");
+                document.getElementById('form1').reset();
+            });
+        })
+
+        $('#pegar').click(() => {
+            $.ajax({
+                method: "Get",
+                url: "http://localhost:8082/Escolinha/Alunos/BuscarTodosAlunos",
+                success: function (data) {
+                    $('table > tbody > tr').remove();
+                    for (let i = 0; i < data.length; i++) {
+                        $('table > tbody').append('<tr><td>' + data[i].nome + '</td><td>' + data[i].dataDeNascimento + '</td></tr>');
+                    }
+                }
+            }).fail(function (xhr, status, errorThrown) {
+                alert('Algo deu Errado ' + xhr.responseText)
+            })
+        })
+
+    </script>
+
+</body>
+
+</html>
